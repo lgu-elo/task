@@ -39,6 +39,7 @@ func (h *taskHandler) GetAllTasks(c context.Context, _ *pb.Empty) (*pb.TasksList
 	for _, task := range tasks {
 		pbtasks.Tasks = append(pbtasks.Tasks, &pb.Task{
 			Id:          int64(task.ID),
+			Name:        task.Name,
 			Description: task.Description,
 			ProjectId:   int64(task.Project_id),
 			UserId:      int64(task.User_id),
@@ -57,6 +58,7 @@ func (h *taskHandler) GetTaskById(c context.Context, request *pb.TaskWithID) (*p
 
 	return &pb.Task{
 		Id:          int64(task.ID),
+		Name:        task.Name,
 		Description: task.Description,
 		ProjectId:   int64(task.Project_id),
 		UserId:      int64(task.User_id),
@@ -67,6 +69,7 @@ func (h *taskHandler) GetTaskById(c context.Context, request *pb.TaskWithID) (*p
 func (h *taskHandler) UpdateTask(c context.Context, request *pb.Task) (*pb.Task, error) {
 	task, err := h.service.UpdateTask(&model.Task{
 		ID:          int(request.Id),
+		Name:        request.Name,
 		Description: request.Description,
 		Project_id:  int(request.ProjectId),
 		User_id:     int(request.UserId),
@@ -78,6 +81,7 @@ func (h *taskHandler) UpdateTask(c context.Context, request *pb.Task) (*pb.Task,
 
 	return &pb.Task{
 		Id:          int64(task.ID),
+		Name:        request.Name,
 		Description: task.Description,
 		ProjectId:   int64(task.Project_id),
 		UserId:      int64(task.User_id),
@@ -95,6 +99,7 @@ func (h *taskHandler) DeleteTask(c context.Context, task *pb.TaskWithID) (*pb.Em
 
 func (h *taskHandler) CreateTask(c context.Context, request *pb.Task) (*pb.Empty, error) {
 	err := h.service.CreateTask(&model.Task{
+		Name:        request.Name,
 		Description: request.Description,
 		Project_id:  int(request.ProjectId),
 		User_id:     int(request.UserId),

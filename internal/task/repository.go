@@ -25,7 +25,7 @@ func (db *storage) GetById(id int) (*model.Task, error) {
 		context.Background(),
 		"SELECT * FROM tasks WHERE id=$1",
 		id,
-	).Scan(&task.ID, &task.Description, &task.Project_id, &task.User_id, &task.Status)
+	).Scan(&task.ID, &task.Name, &task.Description, &task.Project_id, &task.User_id, &task.Status)
 
 	db.log.Println(task.Description)
 	if err != nil {
@@ -48,7 +48,14 @@ func (db *storage) GetAll() ([]*model.Task, error) {
 
 	for rows.Next() {
 		var task model.Task
-		err := rows.Scan(&task.ID, &task.Description, &task.Project_id, &task.User_id, &task.Status)
+		err := rows.Scan(
+			&task.ID,
+			&task.Name,
+			&task.Description,
+			&task.Project_id,
+			&task.User_id,
+			&task.Status,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -68,8 +75,8 @@ func (db *storage) Update(task *model.Task) error {
 
 	rows, err := db.Query(
 		context.Background(),
-		"UPDATE tasks set description=$1, project_id=$2, user_id=$3, status=$4 WHERE id=$5",
-		task.Description, task.Project_id, task.User_id, task.Status, task.ID,
+		"UPDATE tasks set name=$1, description=$2, project_id=$3, user_id=$4, status=$5 WHERE id=$6",
+		task.Name, task.Description, task.Project_id, task.User_id, task.Status, task.ID,
 	)
 	rows.Close()
 
@@ -90,7 +97,8 @@ func (db *storage) Create(task *model.Task) error {
 
 	rows, err := db.Query(
 		context.Background(),
-		"INSERT INTO tasks(description, project_id, user_id, status) VALUES($1,$2,$3,$4) RETURNING id",
+		"INSERT INTO tasks(name, description, project_id, user_id, status) VALUES($1,$2,$3,$4) RETURNING id",
+		task.Name,
 		task.Description,
 		task.Project_id,
 		task.User_id,
