@@ -3,8 +3,8 @@ package task
 import (
 	"context"
 
-	"github.com/lgu-elo/task/internal/deal/model"
-	"github.com/lgu-elo/task/pb"
+	"github.com/lgu-elo/task/internal/task/model"
+	"github.com/lgu-elo/task/pkg/pb"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -40,10 +40,9 @@ func (h *taskHandler) GetAllTasks(c context.Context, _ *pb.Empty) (*pb.TasksList
 		pbtasks.Tasks = append(pbtasks.Tasks, &pb.Task{
 			Id:          int64(task.ID),
 			Description: task.Description,
-			Amount:      int64(task.Amount),
 			ProjectId:   int64(task.Project_id),
-			ClientName:  task.Client_name,
 			UserId:      int64(task.User_id),
+			Status:      task.Status,
 		})
 	}
 
@@ -60,9 +59,8 @@ func (h *taskHandler) GetTaskById(c context.Context, request *pb.TaskWithID) (*p
 		Id:          int64(task.ID),
 		Description: task.Description,
 		ProjectId:   int64(task.Project_id),
-		Amount:      int64(task.Amount),
-		ClientName:  task.Client_name,
 		UserId:      int64(task.User_id),
+		Status:      task.Status,
 	}, nil
 }
 
@@ -71,9 +69,8 @@ func (h *taskHandler) UpdateTask(c context.Context, request *pb.Task) (*pb.Task,
 		ID:          int(request.Id),
 		Description: request.Description,
 		Project_id:  int(request.ProjectId),
-		Amount:      int(request.Amount),
-		Client_name: request.ClientName,
 		User_id:     int(request.UserId),
+		Status:      request.Status,
 	})
 	if err != nil {
 		return nil, err
@@ -83,9 +80,8 @@ func (h *taskHandler) UpdateTask(c context.Context, request *pb.Task) (*pb.Task,
 		Id:          int64(task.ID),
 		Description: task.Description,
 		ProjectId:   int64(task.Project_id),
-		Amount:      int64(task.Amount),
-		ClientName:  task.Client_name,
 		UserId:      int64(task.User_id),
+		Status:      task.Status,
 	}, nil
 }
 
@@ -101,9 +97,8 @@ func (h *taskHandler) CreateTask(c context.Context, request *pb.Task) (*pb.Empty
 	err := h.service.CreateTask(&model.Task{
 		Description: request.Description,
 		Project_id:  int(request.ProjectId),
-		Amount:      int(request.Amount),
-		Client_name: request.ClientName,
 		User_id:     int(request.UserId),
+		Status:      request.Status,
 	})
 
 	if err != nil {

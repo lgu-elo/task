@@ -1,7 +1,7 @@
 package task
 
 import (
-	"github.com/lgu-elo/task/internal/deal/model"
+	"github.com/lgu-elo/task/internal/task/model"
 	"github.com/pkg/errors"
 )
 

@@ -3,7 +3,7 @@ package task
 import (
 	"context"
 
-	"github.com/lgu-elo/task/internal/deal/model"
+	"github.com/lgu-elo/task/internal/task/model"
 	"github.com/pkg/errors"
 )
 
@@ -25,7 +25,7 @@ func (db *storage) GetById(id int) (*model.Task, error) {
 		context.Background(),
 		"SELECT * FROM tasks WHERE id=$1",
 		id,
-	).Scan(&task.ID, &task.Description, &task.Project_id, &task.Amount, &task.Client_name, &task.User_id)
+	).Scan(&task.ID, &task.Description, &task.Project_id, &task.User_id, &task.Status)
 
 	db.log.Println(task.Description)
 	if err != nil {
@@ -48,14 +48,7 @@ func (db *storage) GetAll() ([]*model.Task, error) {
 
 	for rows.Next() {
 		var task model.Task
-		err := rows.Scan(
-			&task.ID,
-			&task.Description,
-			&task.Project_id,
-			&task.Amount,
-			&task.Client_name,
-			&task.User_id,
-		)
+		err := rows.Scan(&task.ID, &task.Description, &task.Project_id, &task.User_id, &task.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -75,8 +68,8 @@ func (db *storage) Update(task *model.Task) error {
 
 	rows, err := db.Query(
 		context.Background(),
-		"UPDATE tasks set description=$1, project_id=$2, amount=$3, client_name=$4, user_id=$5 WHERE id=$6",
-		task.Description, task.Project_id, task.Amount, task.Client_name, task.User_id, task.ID,
+		"UPDATE tasks set description=$1, project_id=$2, user_id=$3, status=$4 WHERE id=$5",
+		task.Description, task.Project_id, task.User_id, task.Status, task.ID,
 	)
 	rows.Close()
 
@@ -97,12 +90,11 @@ func (db *storage) Create(task *model.Task) error {
 
 	rows, err := db.Query(
 		context.Background(),
-		"INSERT INTO tasks(description, project_id, amount, client_name, user_id) VALUES($1,$2,$3,$4,$5) RETURNING id",
+		"INSERT INTO tasks(description, project_id, user_id, status) VALUES($1,$2,$3,$4) RETURNING id",
 		task.Description,
 		task.Project_id,
-		task.Amount,
-		task.Client_name,
 		task.User_id,
+		task.Status,
 	)
 	rows.Close()
 

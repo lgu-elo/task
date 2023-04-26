@@ -16,9 +16,8 @@ message Task {
     int64 id = 1;
     string description = 2;
     int64 project_id = 3;
-    int64 amount = 4;
-    string client_name = 5;
-    int64 user_id = 6;
+    int64 user_id = 4;
+    string status = 5;
 }
 
 message TasksList {

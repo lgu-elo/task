@@ -3,8 +3,7 @@ package model
 type Task struct {
 	ID          int
 	Description string
-	Project_id     int
-	Amount      int
-	Client_name string
+	Project_id  int
 	User_id     int
+	Status      string
 }
